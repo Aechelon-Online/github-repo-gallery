@@ -1,5 +1,7 @@
 const overview = document.querySelector(".overview")
 const username = "Aechelon-Online"
+const repoList = document.querySelector(".repo-list")
+
 const getProfile = async function () {
     const githubData = await fetch (
         `https://api.github.com/users/${username}`
@@ -24,4 +26,25 @@ const displayUser = function (profileData) {
     <p><strong>Number of public repos:</strong> ${profileData.public_repos}</p>
   </div> `
   overview.append(userinfo)
+  getRepos()
+}
+
+const getRepos = async function () {
+  const githubRepos = await fetch (
+    `https://api.github.com/users/${username}/repos?sort=updated&per-page=100`
+  )
+  const repoData = await githubRepos.json()
+  //console.log(repoData)
+  displayRepos(repoData)
+
+}
+
+
+const displayRepos = function (repos) {
+  for (const repoName of repos) {
+    const repoLi = document.createElement("li")
+    repoLi.classList.add("repo")
+    repoLi.innerHTML = `<h3>${repoName.name}</h3>`
+    repoList.append(repoLi)
+  }
 }

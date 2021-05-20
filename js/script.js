@@ -1,6 +1,8 @@
 const overview = document.querySelector(".overview")
 const username = "Aechelon-Online"
 const repoList = document.querySelector(".repo-list")
+const repoClick = document.querySelector(".repos")
+const repoDataPull = document.querySelector(".repo-data")
 
 const getProfile = async function () {
     const githubData = await fetch (
@@ -41,10 +43,52 @@ const getRepos = async function () {
 
 
 const displayRepos = function (repos) {
-  for (const repoName of repos) {
+  for (const repo of repos) {
     const repoLi = document.createElement("li")
     repoLi.classList.add("repo")
-    repoLi.innerHTML = `<h3>${repoName.name}</h3>`
+    repoLi.innerHTML = `<h3>${repo.name}</h3>`
     repoList.append(repoLi)
   }
+}
+repoList.addEventListener("click", function(e) {
+  if (e.target.matches("h3")) {
+    const repoName = e.target.innerText
+    clickRepo(repoName)
+  }
+})
+
+const clickRepo = async function(repoName) {
+  const fetchRepo = await fetch(
+    `https://api.github.com/repos/${username}/${repoName}`
+  )
+  const repoInfo = await fetchRepo.json()
+  //console.log(repoInfo)
+  const fetchLanguages = await fetch(
+    `https://api.github.com/repos/${username}/${repoName}/languages`
+  )
+  const languageData = await fetchLanguages.json()
+  //console.log(languageData)
+
+  const languages = []
+
+  for (let language in languageData) {
+    languages.push(language)
+    //console.log(languages)
+  }
+  displayRepo(repoInfo, languages)
+}
+
+const displayRepo = function (repoInfo, languages) {
+  repoDataPull.innerHTML = ""
+  repoDataPull.classList.remove("hide")
+  repoClick.classList.add("hide")
+  const displayRepoInfo = document.createElement("div")
+  displayRepoInfo.innerHTML = 
+  `<h3>Name: ${repoInfo.name}</h3>
+  <p>Description: ${repoInfo.description}</p>
+  <p>Default Branch: ${repoInfo.default_branch}</p>
+  <p>Languages: ${languages.join(", ")}</p>
+  <a class="visit" href="${repoInfo.html_url}" target="_blank" rel="noreferrer noopener">View Repo on GitHub!</a>`
+
+  repoDataPull.append(displayRepoInfo)
 }

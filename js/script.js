@@ -3,6 +3,8 @@ const username = "Aechelon-Online"
 const repoList = document.querySelector(".repo-list")
 const repoClick = document.querySelector(".repos")
 const repoDataPull = document.querySelector(".repo-data")
+const backButton = document.querySelector(".view-repos")
+const filterInput = document.querySelector(".filter-repos")
 
 const getProfile = async function () {
     const githubData = await fetch (
@@ -43,6 +45,7 @@ const getRepos = async function () {
 
 
 const displayRepos = function (repos) {
+  filterInput.classList.remove("hide")
   for (const repo of repos) {
     const repoLi = document.createElement("li")
     repoLi.classList.add("repo")
@@ -50,6 +53,7 @@ const displayRepos = function (repos) {
     repoList.append(repoLi)
   }
 }
+
 repoList.addEventListener("click", function(e) {
   if (e.target.matches("h3")) {
     const repoName = e.target.innerText
@@ -82,6 +86,7 @@ const displayRepo = function (repoInfo, languages) {
   repoDataPull.innerHTML = ""
   repoDataPull.classList.remove("hide")
   repoClick.classList.add("hide")
+  backButton.classList.remove("hide")
   const displayRepoInfo = document.createElement("div")
   displayRepoInfo.innerHTML = 
   `<h3>Name: ${repoInfo.name}</h3>
@@ -92,3 +97,25 @@ const displayRepo = function (repoInfo, languages) {
 
   repoDataPull.append(displayRepoInfo)
 }
+
+backButton.addEventListener("click", function(e) {
+  repoClick.classList.remove("hide")
+  repoDataPull.classList.add("hide")
+  backButton.classList.add("hide")
+})
+
+filterInput.addEventListener("input", function(e) {
+  const searchText = e.target.value
+  //console.log(searchText)
+  const repos = document.querySelectorAll(".repo")
+  const repoSearch = searchText.toLowerCase()
+  for (const repoMatch of repos) {
+      repoLowerCase = repoMatch.innerText.toLowerCase()
+      if (repoLowerCase.includes(repoSearch)) {
+        repoMatch.classList.remove("hide")
+      } else {
+        repoMatch.classList.add("hide")
+      }
+  }
+    
+})
